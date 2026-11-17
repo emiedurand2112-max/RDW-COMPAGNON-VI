@@ -177,7 +177,11 @@ const seedChallenges=[
 function load(){let base={places:[],challenges:[],weapons:[],vehicles:[],collections:[]};try{let old=JSON.parse(localStorage.getItem(KEY));if(old&&typeof old==='object')base={...base,...old}}catch(e){};base.vehicles=Array.isArray(base.vehicles)?base.vehicles:[];base.weapons=Array.isArray(base.weapons)?base.weapons:[];base.places=Array.isArray(base.places)?base.places:[];base.challenges=Array.isArray(base.challenges)?base.challenges:[];base.collections=Array.isArray(base.collections)?base.collections:[];return base}
 let data=load();let savedPlaceCatalog=data.places.filter(x=>x.catalogue);let customPlaces=data.places.filter(x=>!x.catalogue);let cataloguePlaces=seedPlaces.map((p,i)=>savedPlaceCatalog.find(x=>x.name===p[0])||({id:'loc-'+i,name:p[0],category:p[1],note:p[2],confidence:p[3],x:p[4],y:p[5],status:'todo',catalogue:true}));
 function migrateCatalog(key,seeds){let existing=new Map(data[key].filter(x=>x.catalogue).map(x=>[x.name,x]));let customs=data[key].filter(x=>!x.catalogue);return [...seeds.map((s,i)=>{let old=existing.get(s[0]);return old?{...old,image:old.image||officialImages[old.name]||''}:{id:key+'-'+i,name:s[0],category:s[1],type:s[2],note:s[3],confidence:s[4],status:'unknown',catalogue:true,image:officialImages[s[0]]||''}}),...customs]}
-data.vehicles=migrateCatalog('vehicles',seedVehicles);data.weapons=migrateCatalog('weapons',seedWeapons);
+data.vehicles=migrateCatalog('vehicles',seedVehicles);data.weapons=migrateCatalog('weapons',seedWeapons);const savedChallenges=data.challenges||[];
+data.challenges=seedChallenges.map(seed=>{
+const saved=savedChallenges.find(x=>x.id===seed.id);
+return saved?{...seed,...saved}:{...seed};
+}).concat(savedChallenges.filter(x=>!x.catalogue&&!seedChallenges.some(seed=>seed.id===x.id)));
 function persist(){data.places=cataloguePlaces.concat(customPlaces);localStorage.setItem(KEY,JSON.stringify(data));renderAll()}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===p));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));window.scrollTo({top:0,behavior:'smooth'})}document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));

@@ -178,7 +178,11 @@ function load(){let base={places:[],challenges:[],weapons:[],vehicles:[],collect
 let data=load();let savedPlaceCatalog=data.places.filter(x=>x.catalogue);let customPlaces=data.places.filter(x=>!x.catalogue);let cataloguePlaces=seedPlaces.map((p,i)=>savedPlaceCatalog.find(x=>x.name===p[0])||({id:'loc-'+i,name:p[0],category:p[1],note:p[2],confidence:p[3],x:p[4],y:p[5],status:'todo',catalogue:true}));
 function migrateCatalog(key,seeds){let existing=new Map(data[key].filter(x=>x.catalogue).map(x=>[x.name,x]));let customs=data[key].filter(x=>!x.catalogue);return [...seeds.map((s,i)=>{let old=existing.get(s[0]);return old?{...old,image:old.image||officialImages[old.name]||''}:{id:key+'-'+i,name:s[0],category:s[1],type:s[2],note:s[3],confidence:s[4],status:'unknown',catalogue:true,image:officialImages[s[0]]||''}}),...customs]}
 data.vehicles=migrateCatalog('vehicles',seedVehicles);data.weapons=migrateCatalog('weapons',seedWeapons);const savedChallenges=data.challenges||[];
+const savedChallenges=data.challenges||[];
 data.challenges=seedChallenges.map(seed=>{
+const saved=savedChallenges.find(x=>x.id===seed.id);
+return saved?{...seed,...saved}:{...seed};
+}).concat(savedChallenges.filter(x=>!x.catalogue&&!seedChallenges.some(seed=>seed.id===x.id)));data.challenges=seedChallenges.map(seed=>{
 const saved=savedChallenges.find(x=>x.id===seed.id);
 return saved?{...seed,...saved}:{...seed};
 }).concat(savedChallenges.filter(x=>!x.catalogue&&!seedChallenges.some(seed=>seed.id===x.id)));

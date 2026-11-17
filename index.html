@@ -195,6 +195,12 @@ function card(item,key){let status=item.status||(item.done?'obtained':'unknown')
 function renderVehicles(){let q=(document.getElementById('vehicleSearch').value||'').toLowerCase(),cat=document.getElementById('vehicleCategory').value,st=document.getElementById('vehicleStatus').value;let a=data.vehicles.filter(x=>(x.name+' '+x.category+' '+(x.type||'')).toLowerCase().includes(q)&&(cat==='all'||x.category===cat)&&(st==='all'||(x.status||'unknown')===st));document.getElementById('vehicleCount').textContent=a.length+' véhicule(s) affiché(s) sur '+data.vehicles.length;document.getElementById('vehicleList').innerHTML=a.length?a.map(x=>card(x,'vehicles')).join(''):'<div class="empty">Aucun véhicule correspondant.</div>'}
 function renderWeapons(){let q=(document.getElementById('weaponSearch').value||'').toLowerCase(),cat=document.getElementById('weaponCategory').value,st=document.getElementById('weaponStatus').value;let a=data.weapons.filter(x=>(x.name+' '+x.category+' '+(x.type||'')).toLowerCase().includes(q)&&(cat==='all'||x.category===cat)&&(st==='all'||(x.status||'unknown')===st));document.getElementById('weaponList').innerHTML=a.length?a.map(x=>card(x,'weapons')).join(''):'<div class="empty">Aucune arme correspondante.</div>'}
 function renderPlaces(){let q=(document.getElementById('placeSearch').value||'').toLowerCase(),reg=document.getElementById('placeRegionFilter').value,st=document.getElementById('placeStatusFilter').value;let all=cataloguePlaces.concat(customPlaces);let a=all.filter(x=>(x.name+' '+x.category+' '+(x.note||'')).toLowerCase().includes(q)&&(reg==='all'||(reg==='Mes repères'?!x.catalogue:x.name===reg))&&(st==='all'||(x.status||'todo')===st));document.getElementById('placesTotal').textContent=a.length+' lieu(x)';document.getElementById('placesList').innerHTML=a.length?a.map(x=>card(x,'places')).join(''):'<div class="empty">Aucun lieu correspondant.</div>';let board=document.getElementById('mapBoard');board.querySelectorAll('.map-pin').forEach(x=>x.remove());a.forEach((p,i)=>{let pin=document.createElement('button');pin.className='map-pin '+(['discovered','visited'].includes(p.status)?'visited':'');pin.style.left=(p.x||50)+'%';pin.style.top=(p.y||50)+'%';pin.textContent=i+1;pin.title=p.name;pin.onclick=()=>detail('places',p.id);board.appendChild(pin)})}
+function renderAll(){
+renderVehicles();
+renderWeapons();
+renderPlaces();
+renderChallenges();
+}
 function renderChallenges(){
 const q=(document.getElementById('challengeSearch').value||'').toLowerCase();
 const f=document.getElementById('challengeFilter').value;

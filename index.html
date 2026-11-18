@@ -143,7 +143,6 @@ const officialImages={
   'Mustang .357':'https://www.rockstargames.com/VI/_next/static/media/Ambrosia_03.0vt46a.1s.7-y.jpg?akim=1&imdensity=1&imwidth=3840',
   'Nipper .38':'https://www.rockstargames.com/VI/_next/static/media/Lucia_Caminos_08.08wo73uyjkhlk.jpg?akim=1&imdensity=1&imwidth=3840',
   'Duke Arms 556 Assault Rifle':'https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_05.0kxp6enhvzqka.jpg?akim=1&imdensity=1&imwidth=3840',
-  'Baseball Bat':'https://www.rockstargames.com/VI/_next/static/media/Port_Gellhorn_07.053ldlg0m.2r..jpg?akim=1&imdensity=1&imwidth=3840',
   'Binoculars':'https://www.rockstargames.com/VI/_next/static/media/Jason_Duval_03.0-1vum7x-3vtp.jpg?akim=1&imdensity=1&imwidth=3840'
 };
 const seedVehicles=[
@@ -265,7 +264,7 @@ const seedChallenges=[
 ];
 function load(){let base={places:[],challenges:[],weapons:[],vehicles:[],collections:[]};try{let old=JSON.parse(localStorage.getItem(KEY));if(old&&typeof old==='object')base={...base,...old}}catch(e){};base.vehicles=Array.isArray(base.vehicles)?base.vehicles:[];base.weapons=Array.isArray(base.weapons)?base.weapons:[];base.places=Array.isArray(base.places)?base.places:[];base.challenges=Array.isArray(base.challenges)?base.challenges:[];base.collections=Array.isArray(base.collections)?base.collections:[];return base}
 let data=load();let savedPlaceCatalog=data.places.filter(x=>x.catalogue);let customPlaces=data.places.filter(x=>!x.catalogue);let cataloguePlaces=seedPlaces.map((p,i)=>savedPlaceCatalog.find(x=>x.name===p[0])||({id:'loc-'+i,name:p[0],category:p[1],note:p[2],confidence:p[3],x:p[4],y:p[5],status:'todo',catalogue:true}));
-function migrateCatalog(key,seeds){let existing=new Map(data[key].filter(x=>x.catalogue).map(x=>[x.name,x]));let customs=data[key].filter(x=>!x.catalogue);return [...seeds.map((s,i)=>{let old=existing.get(s[0]);return old?{...old,image:old.name==='Vapid Dominator'&&old.image&&old.image.includes('ULTIMATE_EDITION_VAPID_BUGGY')?'':(officialImages[old.name]||old.image||'')}:{id:key+'-'+i,name:s[0],category:s[1],type:s[2],note:s[3],confidence:s[4],status:'unknown',catalogue:true,image:officialImages[s[0]]||''}}),...customs]}
+function migrateCatalog(key,seeds){let existing=new Map(data[key].filter(x=>x.catalogue).map(x=>[x.name,x]));let customs=data[key].filter(x=>!x.catalogue);return [...seeds.map((s,i)=>{let old=existing.get(s[0]);return old?{...old,image:old.name==='Baseball Bat'?'':(old.name==='Vapid Dominator'&&old.image&&old.image.includes('ULTIMATE_EDITION_VAPID_BUGGY')?'':(officialImages[old.name]||old.image||''))}:{id:key+'-'+i,name:s[0],category:s[1],type:s[2],note:s[3],confidence:s[4],status:'unknown',catalogue:true,image:officialImages[s[0]]||''}}),...customs]}
 data.vehicles=migrateCatalog('vehicles',seedVehicles);data.weapons=migrateCatalog('weapons',seedWeapons);
 const savedChallenges=data.challenges||[];
 data.challenges=seedChallenges.map(seed=>{
